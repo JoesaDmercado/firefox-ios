@@ -111,6 +111,7 @@ class TopTabsTest: BaseTestCase {
 
     // This test is disabled for iPad because the toast menu is not shown there
     func testSwitchBetweenTabsToastButton() {
+        if !iPad() {
         navigator.openURL(toastUrl["url"]!)
         waitUntilPageLoad()
 
@@ -144,10 +145,12 @@ class TopTabsTest: BaseTestCase {
         XCTAssertTrue(app.staticTexts[toastUrl["link"]!].exists)
         let numPrivTab = app.buttons["Show Tabs"].value as? String
         XCTAssertEqual("2", numPrivTab)
+        }
     }
 
     // This test is disabled for iPad because the toast menu is not shown there
     func testSwitchBetweenTabsNoPrivatePrivateToastButton() {
+        if !iPad() {
         navigator.openURL(url)
         waitUntilPageLoad()
 
@@ -163,6 +166,7 @@ class TopTabsTest: BaseTestCase {
         XCTAssertTrue(app.staticTexts["Rust language"].exists)
         navigator.goto(TabTray)
         XCTAssertTrue(app.buttons["TabTrayController.maskButton"].isEnabled)
+        }
     }
 
     func testCloseOneTab() {
