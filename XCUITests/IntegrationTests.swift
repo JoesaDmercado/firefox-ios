@@ -40,10 +40,7 @@ class IntegrationTests: BaseTestCase {
         navigator.nowAt(BrowserTab)
     }
 
-    func testFxASyncHistory () {
-        // History is generated using the DB so go directly to Sign in
-        // Sign into Firefox Accounts
-        navigator.goto(BrowserTabMenu)
+    private func signInFxAccounts() {
         navigator.goto(FxASigninScreen)
         waitforExistence(app.webViews.staticTexts["Sign in"], timeout: 10)
         userState.fxaUsername = ProcessInfo.processInfo.environment["FXA_EMAIL"]!
@@ -51,12 +48,23 @@ class IntegrationTests: BaseTestCase {
         navigator.performAction(Action.FxATypeEmail)
         navigator.performAction(Action.FxATypePassword)
         navigator.performAction(Action.FxATapOnSignInButton)
+    }
+
+    private func waitForInitialSyncComplete() {
+        navigator.nowAt(BrowserTab)
+        navigator.goto(SettingsScreen)
+        waitforExistence(app.tables.staticTexts["Sync Now"], timeout: 10)
+    }
+
+    func testFxASyncHistory () {
+        // History is generated using the DB so go directly to Sign in
+        // Sign into Firefox Accounts
+        navigator.goto(BrowserTabMenu)
+        signInFxAccounts()
         allowNotifications()
 
         // Wait for initial sync to complete
-        navigator.nowAt(BrowserTab)
-        navigator.goto(SettingsScreen)
-        waitforExistence(app.tables.staticTexts["Sync Now"], timeout: 12)
+        waitForInitialSyncComplete()
     }
 
     func testFxASyncBookmark () {
@@ -67,18 +75,10 @@ class IntegrationTests: BaseTestCase {
         bookmark()
 
         // Sign into Firefox Accounts
-        navigator.goto(FxASigninScreen)
-        waitforExistence(app.webViews.staticTexts["Sign in"], timeout: 10)
-        userState.fxaUsername = ProcessInfo.processInfo.environment["FXA_EMAIL"]!
-        userState.fxaPassword = ProcessInfo.processInfo.environment["FXA_PASSWORD"]!
-        navigator.performAction(Action.FxATypeEmail)
-        navigator.performAction(Action.FxATypePassword)
-        navigator.performAction(Action.FxATapOnSignInButton)
+        signInFxAccounts()
         allowNotifications()
 
         // Wait for initial sync to complete
-        navigator.nowAt(BrowserTab)
-        navigator.goto(SettingsScreen)
-        waitforExistence(app.tables.staticTexts["Sync Now"], timeout: 10)
+        waitForInitialSyncComplete()
     }
 }
